@@ -1,5 +1,12 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, Image, Animated} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  Animated,
+  FlatList,
+} from 'react-native';
 import {Home, Profile, Search} from '..';
 import {COLORS, SIZES, FONTS, constants} from '../../constants';
 import {Shadow} from 'react-native-shadow-2';
@@ -52,7 +59,7 @@ type TabsProps = {
 };
 
 const Tabs = ({scrollX, onBottomTabPress}: TabsProps) => {
-  const containerRef = React.useRef<View>(null);
+  const containerRef = React.useRef<null | View>(null);
   const [measureLayout, setMeasureLayout] = React.useState<MeasureLayout[]>([]);
 
   React.useEffect(() => {
@@ -119,7 +126,7 @@ const Tabs = ({scrollX, onBottomTabPress}: TabsProps) => {
   );
 };
 const MainLayout = () => {
-  const flatListRef = React.useRef<any>();
+  const flatListRef = React.useRef<null | FlatList>(null);
   const scrollX = React.useRef(new Animated.Value(0)).current;
 
   const onBottomTabPress = React.useCallback(bottomTabIndex => {

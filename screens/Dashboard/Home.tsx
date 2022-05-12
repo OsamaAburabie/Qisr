@@ -39,6 +39,7 @@ const Section = ({containerStyle, title, onPress, children}: SectionProps) => {
           style={{
             flex: 1,
             ...FONTS.h2,
+            color: COLORS.gray50,
           }}>
           {title}
         </Text>
