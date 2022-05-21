@@ -1,5 +1,6 @@
 import {combineReducers, configureStore} from '@reduxjs/toolkit';
 import counterReducer from '../features/counter/counterSlice';
+import themeReducer from '../features/theme/themeSlice';
 import {
   persistStore,
   persistReducer,
@@ -11,12 +12,12 @@ import {
   REGISTER,
 } from 'redux-persist';
 import {reduxStorage} from '../features/counter/storage';
-const rootReducer = combineReducers({counterReducer});
+const rootReducer = combineReducers({counterReducer, themeReducer});
 
 const persistConfig = {
   key: 'root',
   storage: reduxStorage,
-  whitelist: ['counterReducer'],
+  whitelist: ['counterReducer', 'themeReducer'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -10,6 +10,7 @@ import {
 import React from 'react';
 import {COLORS, FONTS, icons, SIZES} from '../constants';
 import {IconLabel} from '../components';
+import {useTheme} from '../hooks/useTheme';
 
 type Props = {
   course: {
@@ -20,6 +21,7 @@ type Props = {
   containerStyle?: StyleProp<ViewStyle>;
 };
 const VerticalCourseCard = ({containerStyle, course}: Props) => {
+  const theme = useTheme();
   return (
     <TouchableOpacity
       style={[
@@ -75,7 +77,7 @@ const VerticalCourseCard = ({containerStyle, course}: Props) => {
               flex: 1,
               ...FONTS.h3,
               fontSize: 16,
-              color: COLORS.black,
+              color: theme.textColor,
             }}>
             {course?.title}
           </Text>

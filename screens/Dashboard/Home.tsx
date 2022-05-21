@@ -20,6 +20,7 @@ import {
   CategoryCard,
   HorizontalCourseCard,
 } from '../../components';
+import {useTheme} from '../../hooks/useTheme';
 
 type SectionProps = {
   containerStyle?: StyleProp<ViewStyle>;
@@ -28,6 +29,7 @@ type SectionProps = {
   children: React.ReactNode;
 };
 const Section = ({containerStyle, title, onPress, children}: SectionProps) => {
+  const theme = useTheme();
   return (
     <View style={containerStyle}>
       <View
@@ -39,7 +41,7 @@ const Section = ({containerStyle, title, onPress, children}: SectionProps) => {
           style={{
             flex: 1,
             ...FONTS.h2,
-            color: COLORS.gray50,
+            color: theme.name === 'light' ? COLORS.gray50 : COLORS.white,
           }}>
           {title}
         </Text>
@@ -59,6 +61,8 @@ const Section = ({containerStyle, title, onPress, children}: SectionProps) => {
 };
 
 const Home = () => {
+  const theme = useTheme();
+
   function renderHeader() {
     return (
       <View
@@ -76,7 +80,7 @@ const Home = () => {
           <Text
             style={{
               ...FONTS.h2,
-              color: COLORS.black,
+              color: theme.textColor,
             }}>
             Hello, ByProgrammers!
           </Text>
@@ -92,7 +96,7 @@ const Home = () => {
         <IconButton
           icon={icons.notification}
           iconStyle={{
-            tintColor: COLORS.black,
+            tintColor: theme.textColor,
           }}
         />
       </View>
@@ -237,15 +241,19 @@ const Home = () => {
             <HorizontalCourseCard
               course={item}
               containerStyle={{
-                marginVertical: SIZES.padding,
+                // marginVertical: SIZES.padding,
                 marginTop: index == 0 ? SIZES.radius : SIZES.padding,
+                marginBottom:
+                  index == dummyData.courses_list_2.length - 1
+                    ? SIZES.padding - 10
+                    : SIZES.padding,
               }}
             />
           )}
           ItemSeparatorComponent={() => (
             <LineDevider
               lineStyle={{
-                backgroundColor: COLORS.gray20,
+                backgroundColor: theme.lineDivider,
               }}
             />
           )}
@@ -257,16 +265,19 @@ const Home = () => {
     <View
       style={{
         flex: 1,
-        backgroundColor: COLORS.white,
+        width: SIZES.width,
+        backgroundColor: theme.backgroundColor1,
       }}>
       {/* Header */}
       {renderHeader()}
 
       {/* Content */}
       <ScrollView
-        contentContainerStyle={{
-          paddingBottom: 150,
-        }}
+        contentContainerStyle={
+          {
+            // paddingBottom: 135,
+          }
+        }
         showsVerticalScrollIndicator={false}>
         {/* Start Learning */}
         {renderStartLearning()}

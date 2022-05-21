@@ -6,10 +6,12 @@ import {
   Image,
   Animated,
   FlatList,
+  StatusBar,
 } from 'react-native';
 import {Home, Profile, Search} from '..';
 import {COLORS, SIZES, FONTS, constants} from '../../constants';
 import {Shadow} from 'react-native-shadow-2';
+import {useTheme} from '../../hooks/useTheme';
 const bottom_tabs = constants.bottom_tabs.map(bottom_tab => ({
   ...bottom_tab,
   ref: React.createRef<any>(),
@@ -126,9 +128,9 @@ const Tabs = ({scrollX, onBottomTabPress}: TabsProps) => {
   );
 };
 const MainLayout = () => {
+  const theme = useTheme();
   const flatListRef = React.useRef<null | FlatList>(null);
   const scrollX = React.useRef(new Animated.Value(0)).current;
-
   const onBottomTabPress = React.useCallback(bottomTabIndex => {
     flatListRef?.current?.scrollToOffset({
       offset: bottomTabIndex * SIZES.width,
@@ -139,6 +141,9 @@ const MainLayout = () => {
       <View style={{flex: 1}}>
         <Animated.FlatList
           ref={flatListRef}
+          style={{
+            flex: 1,
+          }}
           horizontal
           scrollEnabled={false}
           pagingEnabled
@@ -155,16 +160,13 @@ const MainLayout = () => {
             },
           )}
           renderItem={({item, index}) => {
+            // it was a view with width and height set to full screen SIZE.width and SIZE.height
             return (
-              <View
-                style={{
-                  height: SIZES.height,
-                  width: SIZES.width,
-                }}>
+              <>
                 {item.label == constants.screens.home && <Home />}
                 {item.label == constants.screens.search && <Search />}
                 {item.label == constants.screens.profile && <Profile />}
-              </View>
+              </>
             );
           }}
         />
@@ -176,18 +178,18 @@ const MainLayout = () => {
     return (
       <View
         style={{
-          position: 'absolute',
-          bottom: 0,
-          marginBottom: 20,
+          // position: 'absolute',
           paddingHorizontal: SIZES.padding,
           paddingVertical: SIZES.radius,
+          // paddingBottom: SIZES.radius,
+          backgroundColor: theme.backgroundColor1,
         }}>
         <Shadow size={[SIZES.width - SIZES.padding * 2, 85]}>
           <View
             style={{
               flex: 1,
               borderRadius: SIZES.radius,
-              backgroundColor: COLORS.primary3,
+              backgroundColor: theme.backgroundColor2,
             }}>
             <Tabs scrollX={scrollX} onBottomTabPress={onBottomTabPress} />
           </View>
@@ -199,8 +201,16 @@ const MainLayout = () => {
     <View
       style={{
         flex: 1,
-        // backgroundColor: 'red',
+        backgroundColor: theme.backgroundColor1,
       }}>
+      {/* Status bar */}
+      <StatusBar
+        barStyle={`${
+          theme.name === 'light' ? 'dark-content' : 'light-content'
+        }`}
+        backgroundColor={theme.backgroundColor1}
+        animated={true}
+      />
       {/* Content */}
       {renderContent()}
       {/* Bottom Tabs */}

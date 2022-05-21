@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import React from 'react';
 import {COLORS, FONTS, SIZES} from '../constants';
+import {useTheme} from '../hooks/useTheme';
 
 type Props = {
   containerStyle?: StyleProp<ViewStyle>;
@@ -25,6 +26,7 @@ const IconLabel = ({
   label,
   labelStyle,
 }: Props) => {
+  const theme = useTheme();
   return (
     <View
       style={[
@@ -40,7 +42,7 @@ const IconLabel = ({
           {
             width: 20,
             height: 20,
-            tintColor: COLORS.gray30,
+            tintColor: theme.textColor3,
           },
           iconStyle,
         ]}
@@ -50,7 +52,7 @@ const IconLabel = ({
         style={[
           {
             marginLeft: SIZES.base,
-            color: COLORS.gray30,
+            color: theme.textColor3,
             ...FONTS.body3,
           },
           labelStyle,
