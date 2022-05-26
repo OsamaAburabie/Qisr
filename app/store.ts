@@ -1,6 +1,9 @@
 import {combineReducers, configureStore} from '@reduxjs/toolkit';
 import counterReducer from '../features/counter/counterSlice';
 import themeReducer from '../features/theme/themeSlice';
+import authReducer from '../features/auth/authSlice';
+import {api} from './services/auth';
+import {mmkvReduxConfig} from '../utils/mmkvReduxConfig';
 import {
   persistStore,
   persistReducer,
@@ -11,13 +14,17 @@ import {
   PURGE,
   REGISTER,
 } from 'redux-persist';
-import {reduxStorage} from '../features/counter/storage';
-const rootReducer = combineReducers({counterReducer, themeReducer});
+const rootReducer = combineReducers({
+  counterReducer,
+  themeReducer,
+  authReducer,
+  [api.reducerPath]: api.reducer,
+});
 
 const persistConfig = {
   key: 'root',
-  storage: reduxStorage,
-  whitelist: ['counterReducer', 'themeReducer'],
+  storage: mmkvReduxConfig,
+  whitelist: ['counterReducer', 'themeReducer', 'authReducer'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -31,7 +38,7 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }),
+    }).concat(api.middleware),
 });
 
 export let persistor = persistStore(store);
