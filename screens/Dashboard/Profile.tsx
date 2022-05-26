@@ -3,6 +3,7 @@ import {View, Text, Button, TextInput} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLoginMutation, useEventsQuery} from '../../app/services/auth';
 import {RootState} from '../../app/store';
+import {useQuery} from 'react-query';
 import {SIZES} from '../../constants';
 import {
   logout,
@@ -12,18 +13,13 @@ import {
 import {slelectTheme, toggleTheme} from '../../features/theme/themeSlice';
 import {useTheme} from '../../hooks/useTheme';
 import axios from '../../config/axios';
+import {selectEvents, setEvents} from '../../features/data/DataSlice';
 
 const Profile = () => {
   const dispatch = useDispatch();
   const user = useSelector(selectCurrentUser);
-  const [login, {isLoading}] = useLoginMutation();
-  // const {data} = useEventsQuery(undefined, {
-  //   refetchOnFocus: true,
-  //   refetchOnReconnect: true,
-  // });
-
-  const [data, setData] = useState([]);
-
+  const events = useSelector(selectEvents);
+  const [login] = useLoginMutation();
   const [inputData, setInputData] = useState({
     email: '',
     password: '',
@@ -42,18 +38,29 @@ const Profile = () => {
     dispatch(logout());
   };
 
-  const getData = async () => {
-    try {
-      const response = await axios.get('/api/student/events');
-      setData(response.data?.data?.events);
-    } catch (err) {
-      console.log(err);
-    }
+  const fetchEvents = () => {
+    return axios.get('/api/student/events');
   };
 
-  useEffect(() => {
-    getData();
-  }, []);
+  const placeholderData = {
+    data: {
+      data: {
+        events: events,
+      },
+    },
+  };
+  const {data, isSuccess, isLoading, refetch} = useQuery(
+    'events',
+    fetchEvents,
+    {
+      ...(events.length > 0 && {
+        initialData: placeholderData as any,
+      }),
+      onSuccess: data => {
+        dispatch(setEvents(data.data.data.events));
+      },
+    },
+  );
 
   return (
     <View
@@ -82,10 +89,13 @@ const Profile = () => {
       />
       <Button title="Login" onPress={handleSubmit} />
       <Button title="Logout" onPress={handleLogout} />
-      <Button title="Refetch" onPress={getData} />
+      <Button title="Refetch" onPress={() => refetch()} />
 
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        {data?.map((event: any) => (
+        {isLoading && (
+          <Text style={{color: '#333', fontSize: 20}}>Loading</Text>
+        )}
+        {data?.data?.data?.events?.map((event: any) => (
           <Text
             style={{
               color: '#333',

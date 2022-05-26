@@ -2,6 +2,7 @@ import {combineReducers, configureStore} from '@reduxjs/toolkit';
 import counterReducer from '../features/counter/counterSlice';
 import themeReducer from '../features/theme/themeSlice';
 import authReducer from '../features/auth/authSlice';
+import dataReducer from '../features/data/DataSlice';
 import {api} from './services/auth';
 import {mmkvReduxConfig} from '../utils/mmkvReduxConfig';
 import {
@@ -18,13 +19,14 @@ const rootReducer = combineReducers({
   counterReducer,
   themeReducer,
   authReducer,
+  dataReducer,
   [api.reducerPath]: api.reducer,
 });
 
 const persistConfig = {
   key: 'root',
   storage: mmkvReduxConfig,
-  whitelist: ['counterReducer', 'themeReducer', 'authReducer'],
+  whitelist: ['counterReducer', 'themeReducer', 'authReducer', 'dataReducer'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
