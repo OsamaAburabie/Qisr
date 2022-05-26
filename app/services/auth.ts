@@ -17,6 +17,13 @@ type LoginRequest = {
   password: string;
 };
 
+type EventResponse = {
+  success: boolean;
+  data: {
+    events: [];
+  };
+};
+
 export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: 'http://192.168.1.67:5000/',
@@ -40,7 +47,13 @@ export const api = createApi({
     protected: builder.mutation({
       query: () => 'protected',
     }),
+    events: builder.query<EventResponse, void>({
+      query: () => ({
+        url: 'api/student/events',
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
-export const {useLoginMutation, useProtectedMutation} = api;
+export const {useLoginMutation, useProtectedMutation, useEventsQuery} = api;

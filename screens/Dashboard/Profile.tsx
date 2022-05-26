@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {View, Text, Button, TextInput} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {useLoginMutation} from '../../app/services/auth';
+import {useLoginMutation, useEventsQuery} from '../../app/services/auth';
 import {RootState} from '../../app/store';
 import {SIZES} from '../../constants';
 import {selectCurrentUser, setCredentials} from '../../features/auth/authSlice';
@@ -12,15 +12,15 @@ const Profile = () => {
   const dispatch = useDispatch();
   const user = useSelector(selectCurrentUser);
   const [login, {isLoading}] = useLoginMutation();
+  const {data} = useEventsQuery(undefined, {
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+  });
 
   const [inputData, setInputData] = useState({
     email: '',
     password: '',
   });
-
-  React.useEffect(() => {
-    console.log(isLoading);
-  }, [isLoading]);
 
   const handleSubmit = async () => {
     try {
@@ -57,6 +57,18 @@ const Profile = () => {
         }}
       />
       <Button title="Login" onPress={handleSubmit} />
+
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        {data?.data?.events.map((event: any) => (
+          <Text
+            style={{
+              color: '#333',
+            }}
+            key={event.id}>
+            {event.title}
+          </Text>
+        ))}
+      </View>
     </View>
   );
 };
