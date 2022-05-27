@@ -5,6 +5,7 @@ import {useLoginMutation, useEventsQuery} from '../../app/services/auth';
 import {RootState} from '../../app/store';
 import {useQuery} from 'react-query';
 import {SIZES} from '../../constants';
+import EventtItem from '../../components/EventtItem';
 import {
   logout,
   selectCurrentUser,
@@ -14,12 +15,16 @@ import {slelectTheme, toggleTheme} from '../../features/theme/themeSlice';
 import {useTheme} from '../../hooks/useTheme';
 import axios from '../../config/axios';
 import {selectEvents, setEvents} from '../../features/data/DataSlice';
+import {useMainContext} from '../../context/MainContextProvider';
 
 const Profile = () => {
   const dispatch = useDispatch();
   const user = useSelector(selectCurrentUser);
-  const events = useSelector(selectEvents);
+  // const events = useSelector(selectEvents);
   const [login] = useLoginMutation();
+  const {events, setEvents} = useMainContext() as any;
+
+  // console.log(events);
   const [inputData, setInputData] = useState({
     email: '',
     password: '',
@@ -49,18 +54,19 @@ const Profile = () => {
       },
     },
   };
-  const {data, isSuccess, isLoading, refetch} = useQuery(
-    'events',
-    fetchEvents,
-    {
-      ...(events.length > 0 && {
-        initialData: placeholderData as any,
-      }),
-      onSuccess: data => {
-        dispatch(setEvents(data.data.data.events));
-      },
+  const {data, isLoading, refetch} = useQuery('events', fetchEvents, {
+    ...(events?.length > 0 && {
+      initialData: placeholderData as any,
+    }),
+    onSuccess: data => {
+      // console.log(data.data.data.events);
+      // dispatch(setEvents(data.data.data.events));
+      setEvents(data.data.data.events);
     },
-  );
+    onError: err => {
+      // console.log(err);
+    },
+  });
 
   return (
     <View
@@ -87,6 +93,7 @@ const Profile = () => {
           color: '#333',
         }}
       />
+
       <Button title="Login" onPress={handleSubmit} />
       <Button title="Logout" onPress={handleLogout} />
       <Button title="Refetch" onPress={() => refetch()} />
@@ -96,13 +103,7 @@ const Profile = () => {
           <Text style={{color: '#333', fontSize: 20}}>Loading</Text>
         )}
         {data?.data?.data?.events?.map((event: any) => (
-          <Text
-            style={{
-              color: '#333',
-            }}
-            key={event.id}>
-            {event.title}
-          </Text>
+          <EventtItem key={event.id} {...event} />
         ))}
       </View>
     </View>
